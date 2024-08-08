@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch API</title>
+    <style>
+      table {
+        width: 80%;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Employee List</h1>
+    <table id="table">
+      <thead>
+        <tr id="head">
+          <!-- headers inserted here -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- table content inserted here -->
+      </tbody>
+    </table>
+    <script>
+      const loadEmployees = async () => {
+        //declaring async function
+        try {
+          const res = await fetch(
+            "https://dummy.restapiexample.com/api/v1/employees" //makes http request to the url and returns a promise
+          );
+          const data = await res.json(); //returned string is parsed into json format
+
+          const tbody = document.querySelector("#table tbody"); //accessing tbody tag
+          const thead = document.querySelector("#head"); //accessing thead tag
+
+          if (data.data.length > 0) {
+            // checks for at least 1 entry
+            const keys = Object.keys(data.data[0]); //stores all keys in an array
+
+            keys.forEach((key) => {
+              //for each key in keys array
+              const th = document.createElement("th"); //creates new th element
+              th.textContent = key; //gives key name to header column
+              thead.appendChild(th); //appends th element to thead
+            });
+
+            data.data.forEach((employee) => {
+              //for each employee in data array (of the data key in the returned json)
+              const row = document.createElement("tr"); //creates a new row for each employee
+              keys.forEach((key) => {
+                //for each key in an employee record
+                const td = document.createElement("td"); //creates a new data cell
+                td.textContent = employee[key]; //set content of cell to value corresponding to the particular key
+                row.appendChild(td); //appends td to tr
+              });
+              tbody.appendChild(row); //appends row to tbody
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      loadEmployees();
+    </script>
+  </body>
+</html>
